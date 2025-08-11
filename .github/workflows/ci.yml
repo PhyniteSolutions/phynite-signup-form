@@ -8,6 +8,9 @@ on:
   release:
     types: [ published ]
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -140,6 +143,9 @@ jobs:
     
     if: github.event_name == 'release'
     
+    permissions:
+      contents: write  # Required to upload release assets
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -189,14 +195,12 @@ jobs:
         zip -r phynite-signup-form.zip phynite-signup-form/
 
     - name: Upload release asset
-      uses: actions/upload-release-asset@v1
+      run: |
+        gh release upload ${{ github.event.release.tag_name }} \
+          /tmp/plugin-build/phynite-signup-form.zip \
+          --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: /tmp/plugin-build/phynite-signup-form.zip
-        asset_name: phynite-signup-form.zip
-        asset_content_type: application/zip
 
   notify:
     runs-on: ubuntu-latest

@@ -5,6 +5,7 @@
 /* global Stripe */
 
 import { validateField, validateFieldWithAvailability, validateFormData } from './validation.js';
+import { initializeTracker } from './tracking.js';
 
 (function($) {
     'use strict';
@@ -18,10 +19,48 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
             this.emailCheck = null;
             this.products = null;
             this.formStartTime = Date.now();
+            this.formViewTime = Date.now();
+            this.userHasInteracted = false;
             this.isEditorPreview = this.form.closest('[data-is-preview="true"]').length > 0 || 
                                   (window.phyniteSignupForm && window.phyniteSignupForm.isEditor);
             
+            // Initialize tracking if not in preview mode
+            if (!this.isEditorPreview) {
+                this.initializeTracking();
+            }
+            
             this.init();
+        }
+        
+        initializeTracking() {
+            // Get tracking config from WordPress localized data
+            const trackingConfig = (window.phyniteSignupForm && window.phyniteSignupForm.tracking) || {};
+            
+            if (trackingConfig.ga_enabled || trackingConfig.fb_enabled) {
+                this.tracker = initializeTracker({
+                    ga: {
+                        enabled: trackingConfig.ga_enabled,
+                        measurementId: trackingConfig.ga_measurement_id
+                    },
+                    facebook: {
+                        enabled: trackingConfig.fb_enabled, 
+                        pixelId: trackingConfig.fb_pixel_id
+                    },
+                    debug: trackingConfig.debug || false
+                });
+                
+                // Track form view
+                this.trackFormView();
+            }
+        }
+        
+        trackFormView() {
+            if (!this.tracker) return;
+            
+            this.tracker.trackFormView({
+                style: this.form.data('style') || 'default',
+                planSelection: this.form.find('.phynite-plans-container').length > 0
+            });
         }
         
         init() {
@@ -81,19 +120,53 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
             });
             
             // Plan selection
-            this.form.on('change', 'input[name="planId"]', () => {
+            this.form.on('change', 'input[name="planId"]', (e) => {
                 this.updateSubmitButton();
+                this.trackPlanSelection($(e.target).val());
             });
             
-            // Input cleanup
+            // Input cleanup and interaction tracking
             this.form.find('input').on('input', (e) => {
                 this.clearFieldError($(e.target));
+                this.trackUserInteraction();
             });
             
             // Prevent honeypot field interaction
             this.form.find('.phynite-honeypot').on('focus input', (e) => {
                 $(e.target).blur().val('');
             });
+        }
+        
+        trackUserInteraction() {
+            if (!this.userHasInteracted && this.tracker) {
+                this.userHasInteracted = true;
+                this.tracker.trackFormStart({
+                    timeSinceView: Date.now() - this.formViewTime
+                });
+            }
+        }
+        
+        trackPlanSelection(planId) {
+            if (!this.tracker || !planId) return;
+            
+            const planData = this.getPlanData(planId);
+            this.tracker.trackFieldComplete('plan', {
+                planId: planId,
+                price: planData ? planData.price : null,
+                interval: planData ? planData.interval : null
+            });
+        }
+        
+        getPlanData(planId) {
+            if (!this.products) return null;
+            
+            const plan = this.products[planId];
+            if (!plan) return null;
+            
+            return {
+                price: plan.amount / 100,
+                interval: planId === 'yearly' ? 'year' : 'month'
+            };
         }
         
         async loadProducts() {
@@ -310,7 +383,21 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
             }
             
             this.clearFieldError(field);
+            
+            // Track email field completion
+            if (this.tracker) {
+                this.tracker.trackFieldComplete('email', {
+                    domain: this.extractDomain(value)
+                });
+            }
+            
             return true;
+        }
+        
+        extractDomain(email) {
+            if (!email || typeof email !== 'string') return null;
+            const match = email.match(/@([^@]+)$/);
+            return match ? match[1].toLowerCase() : null;
         }
         
         validateForm() {
@@ -364,11 +451,19 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
                 return;
             }
             
+            // Track form submission
+            const formData = this.getFormData();
+            if (this.tracker) {
+                this.tracker.trackFormSubmit({
+                    planId: formData.planId,
+                    email: formData.email,
+                    completionTime: Date.now() - this.formViewTime
+                });
+            }
+            
             this.setLoading(true);
             
             try {
-                const formData = this.getFormData();
-                
                 const response = await fetch(`${phyniteSignupForm.apiUrl}create-checkout`, {
                     method: 'POST',
                     headers: {
@@ -381,6 +476,17 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
                 const result = await response.json();
                 
                 if (result.success && result.sessionId) {
+                    // Track successful checkout start (key conversion event)
+                    if (this.tracker) {
+                        const planData = this.getPlanData(formData.planId);
+                        this.tracker.trackCheckoutStart({
+                            planId: formData.planId,
+                            planPrice: planData ? planData.price : null,
+                            email: formData.email,
+                            website: formData.website
+                        });
+                    }
+                    
                     // Use Stripe SDK for proper checkout redirection
                     const stripe = Stripe(phyniteSignupForm.stripePublishableKey);
                     const { error } = await stripe.redirectToCheckout({
@@ -395,6 +501,14 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
                 }
                 
             } catch (error) {
+                // Track form error
+                if (this.tracker) {
+                    this.tracker.trackFormError({
+                        type: 'submission_error',
+                        message: error.message || 'Unknown error'
+                    });
+                }
+                
                 // Form submission error
                 this.showError(error.message || 'An unexpected error occurred. Please try again.');
                 this.setLoading(false);

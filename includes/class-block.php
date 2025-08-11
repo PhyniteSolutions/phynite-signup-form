@@ -37,14 +37,26 @@ class Phynite_Signup_Form_Block {
 			true
 		);
 
+		// Get tracking settings.
+		$settings        = get_option( 'phynite_signup_form_settings', array() );
+		$tracking_config = array(
+			'ga_enabled'        => isset( $settings['enable_ga_tracking'] ) ? $settings['enable_ga_tracking'] : false,
+			'ga_measurement_id' => isset( $settings['ga_measurement_id'] ) ? $settings['ga_measurement_id'] : '',
+			'fb_enabled'        => isset( $settings['enable_fb_tracking'] ) ? $settings['enable_fb_tracking'] : false,
+			'fb_pixel_id'       => isset( $settings['fb_pixel_id'] ) ? $settings['fb_pixel_id'] : '',
+			'debug'             => isset( $settings['enable_logging'] ) ? $settings['enable_logging'] : false,
+		);
+
 		// Localize frontend script with data.
 		wp_localize_script(
 			'phynite-signup-form-frontend',
 			'phyniteSignupForm',
 			array(
-				'apiUrl'   => rest_url( 'phynite-signup/v1/' ),
-				'nonce'    => wp_create_nonce( 'wp_rest' ),
-				'isEditor' => defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['context'] ) && $_GET['context'] === 'edit',
+				'apiUrl'               => rest_url( 'phynite-signup/v1/' ),
+				'nonce'                => wp_create_nonce( 'wp_rest' ),
+				'isEditor'             => defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['context'] ) && 'edit' === $_GET['context'],
+				'tracking'             => $tracking_config,
+				'stripePublishableKey' => isset( $settings['stripe_publishable_key'] ) ? $settings['stripe_publishable_key'] : '',
 			)
 		);
 	}
@@ -124,6 +136,10 @@ class Phynite_Signup_Form_Block {
 
 	/**
 	 * Add custom block category
+	 *
+	 * @param array   $categories Current block categories.
+	 * @param WP_Post $post       The current post object.
+	 * @return array Modified block categories.
 	 */
 	public function add_block_category( $categories, $post ) {
 		return array_merge(
@@ -225,10 +241,14 @@ class Phynite_Signup_Form_Block {
 
 	/**
 	 * Render block on frontend
+	 *
+	 * @param array  $attributes Block attributes.
+	 * @param string $content    Block content.
+	 * @return string Rendered block HTML.
 	 */
 	public function render_block( $attributes, $content ) {
 		// Check if we're in the editor context.
-		$is_editor = defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['context'] ) && $_GET['context'] === 'edit';
+		$is_editor = defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['context'] ) && 'edit' === $_GET['context'];
 
 		// Don't render if API is not configured (unless in editor).
 		$settings = get_option( 'phynite_signup_form_settings', array() );
@@ -371,12 +391,12 @@ class Phynite_Signup_Form_Block {
 							<div class="phynite-plans-container" <?php echo $is_editor ? 'data-loading="false"' : 'data-loading="true"'; ?>>
 								<?php if ( $is_editor ) : ?>
 									<!-- Static plans for editor preview -->
-									<label class="phynite-plan-option <?php echo $attributes['defaultPlan'] === 'monthly' ? 'selected' : ''; ?>" for="<?php echo esc_attr( $form_id ); ?>-plan-monthly">
+									<label class="phynite-plan-option <?php echo 'monthly' === $attributes['defaultPlan'] ? 'selected' : ''; ?>" for="<?php echo esc_attr( $form_id ); ?>-plan-monthly">
 										<input type="radio" 
 												id="<?php echo esc_attr( $form_id ); ?>-plan-monthly"
 												name="planId" 
 												value="monthly" 
-												<?php echo $attributes['defaultPlan'] === 'monthly' ? 'checked' : ''; ?>
+												<?php echo 'monthly' === $attributes['defaultPlan'] ? 'checked' : ''; ?>
 												class="phynite-plan-radio">
 										<div class="phynite-plan-content">
 											<div class="phynite-plan-header">
@@ -401,12 +421,12 @@ class Phynite_Signup_Form_Block {
 										</div>
 									</label>
 									
-									<label class="phynite-plan-option <?php echo $attributes['defaultPlan'] === 'yearly' ? 'selected' : ''; ?>" for="<?php echo esc_attr( $form_id ); ?>-plan-yearly">
+									<label class="phynite-plan-option <?php echo 'yearly' === $attributes['defaultPlan'] ? 'selected' : ''; ?>" for="<?php echo esc_attr( $form_id ); ?>-plan-yearly">
 										<input type="radio" 
 												id="<?php echo esc_attr( $form_id ); ?>-plan-yearly"
 												name="planId" 
 												value="yearly" 
-												<?php echo $attributes['defaultPlan'] === 'yearly' ? 'checked' : ''; ?>
+												<?php echo 'yearly' === $attributes['defaultPlan'] ? 'checked' : ''; ?>
 												class="phynite-plan-radio">
 										<div class="phynite-plan-content">
 											<div class="phynite-plan-header">
@@ -457,9 +477,9 @@ class Phynite_Signup_Form_Block {
 							if ( $attributes['showTermsLinks'] ) {
 								printf(
 									/* translators: %1$s is the Terms of Service link, %2$s is the Privacy Policy link */
-									__( 'I agree to the %1$s and acknowledge the %2$s', 'phynite-signup-form' ),
-									'<a href="' . esc_url( $attributes['termsUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Terms of Service', 'phynite-signup-form' ) . '</a>',
-									'<a href="' . esc_url( $attributes['privacyUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Privacy Policy', 'phynite-signup-form' ) . '</a>'
+									esc_html__( 'I agree to the %1$s and acknowledge the %2$s', 'phynite-signup-form' ),
+									'<a href="' . esc_url( $attributes['termsUrl'] ) . '" target="_blank" rel="noopener">' . esc_html__( 'Terms of Service', 'phynite-signup-form' ) . '</a>',
+									'<a href="' . esc_url( $attributes['privacyUrl'] ) . '" target="_blank" rel="noopener">' . esc_html__( 'Privacy Policy', 'phynite-signup-form' ) . '</a>'
 								);
 							} else {
 								esc_html_e( 'I agree to the Terms of Service and Privacy Policy', 'phynite-signup-form' );
