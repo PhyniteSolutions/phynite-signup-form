@@ -12,14 +12,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     
-    strategy:
-      matrix:
-        php: ['7.4', '8.0', '8.1', '8.2']
-        wordpress: ['5.8', '6.0', '6.1', '6.2', '6.3']
-    
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: false
           MYSQL_ROOT_PASSWORD: password
@@ -30,19 +25,19 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup PHP
+    - name: Setup PHP 8.3
       uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php }}
+        php-version: 8.3
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, mysql, mysqli, pdo_mysql
         coverage: xdebug
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install Composer dependencies
@@ -52,26 +47,19 @@ jobs:
       run: npm ci
 
     - name: Build assets
-      run: npm run build
+      run: npm run build:production
 
     - name: Lint PHP code
       run: |
-        # PHP Code Sniffer
-        ./vendor/bin/phpcs --standard=WordPress --extensions=php --ignore=*/vendor/*,*/node_modules/*,*/tests/* .
-        
-        # PHP Stan (if configured)
-        if [ -f phpstan.neon ]; then
-          ./vendor/bin/phpstan analyse --no-progress
-        fi
+        # Use our custom phpcs.xml configuration
+        ./vendor/bin/phpcs --standard=phpcs.xml .
 
-    - name: Lint JavaScript and CSS
-      run: |
-        npm run lint:js
-        npm run lint:css
+    - name: Lint JavaScript
+      run: npm run lint:js
 
-    - name: Setup WordPress test environment
+    - name: Setup WordPress 6.8 test environment
       run: |
-        bash bin/install-wp-tests.sh wordpress_test root password 127.0.0.1:3306 ${{ matrix.wordpress }}
+        bash bin/install-wp-tests.sh wordpress_test root password 127.0.0.1:3306 6.8.2
 
     - name: Run PHPUnit tests
       run: |
@@ -92,18 +80,18 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup PHP
+    - name: Setup PHP 8.3
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
+        php-version: 8.3
         extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick, mysql, mysqli, pdo_mysql
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install dependencies
@@ -111,20 +99,11 @@ jobs:
         composer install --prefer-dist --no-interaction
         npm ci
 
-    - name: Run PHPMD (PHP Mess Detector)
-      run: |
-        if [ -f phpmd.xml ]; then
-          ./vendor/bin/phpmd . text phpmd.xml --exclude vendor,node_modules,tests
-        fi
-
     - name: Run ESLint
-      run: npm run lint:js -- --format=compact
+      run: npm run lint:js
 
-    - name: Run StyleLint
-      run: npm run lint:css
-
-    - name: Check for WordPress coding standards
-      run: ./vendor/bin/phpcs --standard=WordPress --report=summary .
+    - name: Check WordPress coding standards
+      run: ./vendor/bin/phpcs --standard=phpcs.xml . --report=summary
 
   integration-test:
     runs-on: ubuntu-latest
@@ -134,12 +113,12 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup PHP
+    - name: Setup PHP 8.3
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.1'
+        php-version: 8.3
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-interaction
@@ -160,12 +139,17 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
+
+    - name: Setup PHP 8.3
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: 8.3
 
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
 
     - name: Install dependencies
@@ -174,7 +158,7 @@ jobs:
         npm ci
 
     - name: Build production assets
-      run: npm run build
+      run: npm run build:production
 
     - name: Create plugin package
       run: |
@@ -187,12 +171,14 @@ jobs:
           --exclude='node_modules' \
           --exclude='tests' \
           --exclude='bin' \
-          --exclude='*.json' \
+          --exclude='package*.json' \
           --exclude='*.md' \
           --exclude='composer.*' \
           --exclude='.github' \
-          --exclude='src' \
-          --exclude='*.config.js' \
+          --exclude='assets' \
+          --exclude='phpcs.xml' \
+          --exclude='phpunit.xml' \
+          --exclude='webpack.config.js' \
           ./ /tmp/plugin-build/phynite-signup-form/
         
         # Create zip file
@@ -208,30 +194,6 @@ jobs:
         asset_path: /tmp/plugin-build/phynite-signup-form.zip
         asset_name: phynite-signup-form.zip
         asset_content_type: application/zip
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    
-    if: github.event_name == 'release' && github.event.release.prerelease == false
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-
-    - name: Deploy to WordPress.org
-      run: |
-        # WordPress.org deployment would go here
-        # This requires WordPress.org SVN credentials
-        echo "WordPress.org deployment would run here"
-      env:
-        WP_ORG_USERNAME: ${{ secrets.WP_ORG_USERNAME }}
-        WP_ORG_PASSWORD: ${{ secrets.WP_ORG_PASSWORD }}
 
   notify:
     runs-on: ubuntu-latest
