@@ -13,6 +13,8 @@
  * Text Domain: phynite-signup-form
  * Domain Path: /languages
  * Network: false
+ *
+ * @package PhyniteSignupForm
  */
 
 // Prevent direct access

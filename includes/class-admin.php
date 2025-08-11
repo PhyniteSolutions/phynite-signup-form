@@ -196,7 +196,7 @@ class Phynite_Signup_Form_Admin {
 			
 			<?php if ( isset( $_GET['settings-updated'] ) ) : ?>
 				<div class="notice notice-success is-dismissible">
-					<p><?php _e( 'Settings saved successfully!', 'phynite-signup-form' ); ?></p>
+					<p><?php esc_html_e( 'Settings saved successfully!', 'phynite-signup-form' ); ?></p>
 				</div>
 			<?php endif; ?>
 			
@@ -212,31 +212,31 @@ class Phynite_Signup_Form_Admin {
 					
 					<hr>
 					
-					<h2><?php _e( 'API Connection Test', 'phynite-signup-form' ); ?></h2>
-					<p><?php _e( 'Test your API configuration to ensure it\'s working correctly.', 'phynite-signup-form' ); ?></p>
+					<h2><?php esc_html_e( 'API Connection Test', 'phynite-signup-form' ); ?></h2>
+					<p><?php esc_html_e( 'Test your API configuration to ensure it\'s working correctly.', 'phynite-signup-form' ); ?></p>
 					<a href="<?php echo wp_nonce_url( admin_url( 'options-general.php?page=phynite-signup-form&test_api=1' ), 'test_api_connection' ); ?>" 
 						class="button button-secondary">
-						<?php _e( 'Test API Connection', 'phynite-signup-form' ); ?>
+						<?php esc_html_e( 'Test API Connection', 'phynite-signup-form' ); ?>
 					</a>
 				</div>
 				
 				<div class="phynite-sidebar">
 					<div class="phynite-widget">
-						<h3><?php _e( 'Quick Setup Guide', 'phynite-signup-form' ); ?></h3>
+						<h3><?php esc_html_e( 'Quick Setup Guide', 'phynite-signup-form' ); ?></h3>
 						<ol>
-							<li><?php _e( 'Enter your Stewie API key', 'phynite-signup-form' ); ?></li>
-							<li><?php _e( 'Configure your environment (dev/prod)', 'phynite-signup-form' ); ?></li>
-							<li><?php _e( 'Customize form appearance', 'phynite-signup-form' ); ?></li>
-							<li><?php _e( 'Test the API connection', 'phynite-signup-form' ); ?></li>
-							<li><?php _e( 'Add the signup form block to your pages', 'phynite-signup-form' ); ?></li>
+							<li><?php esc_html_e( 'Enter your Stewie API key', 'phynite-signup-form' ); ?></li>
+							<li><?php esc_html_e( 'Configure your environment (dev/prod)', 'phynite-signup-form' ); ?></li>
+							<li><?php esc_html_e( 'Customize form appearance', 'phynite-signup-form' ); ?></li>
+							<li><?php esc_html_e( 'Test the API connection', 'phynite-signup-form' ); ?></li>
+							<li><?php esc_html_e( 'Add the signup form block to your pages', 'phynite-signup-form' ); ?></li>
 						</ol>
 					</div>
 					
 					<div class="phynite-widget">
-						<h3><?php _e( 'Need Help?', 'phynite-signup-form' ); ?></h3>
-						<p><?php _e( 'Visit our documentation for detailed setup instructions and troubleshooting tips.', 'phynite-signup-form' ); ?></p>
+						<h3><?php esc_html_e( 'Need Help?', 'phynite-signup-form' ); ?></h3>
+						<p><?php esc_html_e( 'Visit our documentation for detailed setup instructions and troubleshooting tips.', 'phynite-signup-form' ); ?></p>
 						<a href="https://phynitesolutions.com/docs/wordpress-plugin" target="_blank" class="button">
-							<?php _e( 'View Documentation', 'phynite-signup-form' ); ?>
+							<?php esc_html_e( 'View Documentation', 'phynite-signup-form' ); ?>
 						</a>
 					</div>
 				</div>
@@ -252,10 +252,20 @@ class Phynite_Signup_Form_Admin {
 		echo '<p>' . __( 'Configure your Stewie API connection settings.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Form section callback
+	 *
+	 * Renders the description text for the Form Configuration settings section.
+	 */
 	public function form_section_callback() {
 		echo '<p>' . __( 'Customize the appearance and behavior of your signup forms.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Security section callback
+	 *
+	 * Renders the description text for the Security Settings section.
+	 */
 	public function security_section_callback() {
 		echo '<p>' . __( 'Configure security and rate limiting options.', 'phynite-signup-form' ) . '</p>';
 	}
@@ -272,6 +282,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Your Stewie API key (starts with phyn_). Keep this secure and never share it publicly.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Stewie URL field callback
+	 *
+	 * Renders the input field for the Stewie API base URL setting.
+	 */
 	public function stewie_url_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['stewie_url'] ) ? $settings['stewie_url'] : 'https://api.phynitesolutions.com';
@@ -282,6 +297,11 @@ class Phynite_Signup_Form_Admin {
 		echo __( 'Development: http://localhost:4000', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Environment field callback
+	 *
+	 * Renders the select dropdown for environment selection (production, staging, development).
+	 */
 	public function environment_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['environment'] ) ? $settings['environment'] : 'production';
@@ -300,6 +320,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Select the environment this plugin is running in.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Stripe publishable key field callback
+	 *
+	 * Renders the input field for the Stripe publishable key setting with examples.
+	 */
 	public function stripe_publishable_key_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['stripe_publishable_key'] ) ? $settings['stripe_publishable_key'] : '';
@@ -310,6 +335,11 @@ class Phynite_Signup_Form_Admin {
 		echo __( 'Live key: pk_live_51MAK49HmpGLWBl6Cl6iP3K2l5T5JAW9KivwmLrzprIYrOqtnwwyEBgOZVLJNbUO2ISfYpwMgugndk4XAsE52YOm9006dXtkc9f', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Form style field callback
+	 *
+	 * Renders the select dropdown for form style selection (default, minimal, modern, compact).
+	 */
 	public function form_style_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['form_style'] ) ? $settings['form_style'] : 'default';
@@ -329,6 +359,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Choose the visual style for your signup forms.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Primary color field callback
+	 *
+	 * Renders the color picker input for the primary color setting used in forms.
+	 */
 	public function primary_color_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['primary_color'] ) ? $settings['primary_color'] : '#007cba';
@@ -337,6 +372,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Primary color for buttons and form elements.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Show terms links field callback
+	 *
+	 * Renders the checkbox for showing terms of service and privacy policy links in forms.
+	 */
 	public function show_terms_links_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['show_terms_links'] ) ? $settings['show_terms_links'] : true;
@@ -346,6 +386,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Display links to your terms and privacy policy in the form.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Rate limit field callback
+	 *
+	 * Renders the number input for setting the rate limit (submissions per IP per minute).
+	 */
 	public function rate_limit_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['rate_limit'] ) ? $settings['rate_limit'] : 5;
@@ -354,6 +399,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Maximum number of form submissions allowed per IP address per minute.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Enable logging field callback
+	 *
+	 * Renders the checkbox for enabling debug logging of API requests and responses.
+	 */
 	public function enable_logging_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['enable_logging'] ) ? $settings['enable_logging'] : false;
@@ -363,6 +413,11 @@ class Phynite_Signup_Form_Admin {
 		echo '<p class="description">' . __( 'Log API requests and responses for debugging. Disable in production.', 'phynite-signup-form' ) . '</p>';
 	}
 
+	/**
+	 * Allowed domains field callback
+	 *
+	 * Renders the textarea for entering allowed referrer domains (one per line).
+	 */
 	public function allowed_domains_field() {
 		$settings = get_option( $this->settings_option, array() );
 		$value    = isset( $settings['allowed_domains'] ) ? $settings['allowed_domains'] : '';
@@ -465,6 +520,7 @@ class Phynite_Signup_Form_Admin {
 				'admin_notices',
 				function () use ( $result ) {
 					echo '<div class="notice notice-error is-dismissible">';
+					/* translators: %s: error message from API connection test */
 					echo '<p>' . sprintf( __( 'API connection failed: %s', 'phynite-signup-form' ), esc_html( $result['message'] ) ) . '</p>';
 					echo '</div>';
 				}

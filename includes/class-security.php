@@ -153,7 +153,7 @@ class Phynite_Signup_Form_Security {
 	 * Detect bot requests
 	 */
 	public static function is_bot_request( $user_agent = null, $additional_checks = array() ) {
-		$user_agent = $user_agent ?: ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' );
+		$user_agent = $user_agent ? $user_agent : ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' );
 
 		// Common bot signatures.
 		$bot_patterns = array(
@@ -216,7 +216,7 @@ class Phynite_Signup_Form_Security {
 	 * Rate limiting check with IP whitelisting
 	 */
 	public function check_rate_limit( $ip = null ) {
-		$ip = $ip ?: $this->get_client_ip();
+		$ip = $ip ? $ip : $this->get_client_ip();
 
 		// Allow localhost and private IPs during development.
 		if ( $this->is_development_environment() && $this->is_private_ip( $ip ) ) {

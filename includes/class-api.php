@@ -287,11 +287,11 @@ class Phynite_Signup_Form_API {
 
 		// Get and sanitize data.
 		$website         = esc_url_raw( $request->get_param( 'website' ) );
-		$firstName       = sanitize_text_field( $request->get_param( 'firstName' ) );
-		$lastName        = sanitize_text_field( $request->get_param( 'lastName' ) );
+		$first_name      = sanitize_text_field( $request->get_param( 'firstName' ) );
+		$last_name       = sanitize_text_field( $request->get_param( 'lastName' ) );
 		$email           = sanitize_email( $request->get_param( 'email' ) );
-		$planId          = sanitize_text_field( $request->get_param( 'planId' ) );
-		$acceptTerms     = $request->get_param( 'acceptTerms' );
+		$plan_id         = sanitize_text_field( $request->get_param( 'planId' ) );
+		$accept_terms    = $request->get_param( 'acceptTerms' );
 		$website_confirm = sanitize_text_field( $request->get_param( 'website_confirm' ) );
 
 		// Validate website.
@@ -308,20 +308,20 @@ class Phynite_Signup_Form_API {
 		}
 
 		// Validate first name.
-		if ( empty( $firstName ) ) {
+		if ( empty( $first_name ) ) {
 			$errors[] = __( 'First name is required.', 'phynite-signup-form' );
-		} elseif ( strlen( $firstName ) > 64 ) {
+		} elseif ( strlen( $first_name ) > 64 ) {
 			$errors[] = __( 'First name must be less than 64 characters.', 'phynite-signup-form' );
-		} elseif ( ! preg_match( "/^[a-zA-Z\s'-]+$/", $firstName ) ) {
+		} elseif ( ! preg_match( "/^[a-zA-Z\s'-]+$/", $first_name ) ) {
 			$errors[] = __( 'First name can only contain letters, spaces, hyphens, and apostrophes.', 'phynite-signup-form' );
 		}
 
 		// Validate last name.
-		if ( empty( $lastName ) ) {
+		if ( empty( $last_name ) ) {
 			$errors[] = __( 'Last name is required.', 'phynite-signup-form' );
-		} elseif ( strlen( $lastName ) > 128 ) {
+		} elseif ( strlen( $last_name ) > 128 ) {
 			$errors[] = __( 'Last name must be less than 128 characters.', 'phynite-signup-form' );
-		} elseif ( ! preg_match( "/^[a-zA-Z\s'-]+$/", $lastName ) ) {
+		} elseif ( ! preg_match( "/^[a-zA-Z\s'-]+$/", $last_name ) ) {
 			$errors[] = __( 'Last name can only contain letters, spaces, hyphens, and apostrophes.', 'phynite-signup-form' );
 		}
 
@@ -334,12 +334,12 @@ class Phynite_Signup_Form_API {
 
 		// Validate plan.
 		$allowed_plans = array( 'monthly', 'yearly' );
-		if ( empty( $planId ) || ! in_array( $planId, $allowed_plans ) ) {
+		if ( empty( $plan_id ) || ! in_array( $plan_id, $allowed_plans ) ) {
 			$errors[] = __( 'Please select a valid subscription plan.', 'phynite-signup-form' );
 		}
 
 		// Validate terms acceptance.
-		if ( ! $acceptTerms ) {
+		if ( ! $accept_terms ) {
 			$errors[] = __( 'You must accept the Terms of Service to continue.', 'phynite-signup-form' );
 		}
 
@@ -354,10 +354,10 @@ class Phynite_Signup_Form_API {
 
 		return array(
 			'website'         => $website,
-			'firstName'       => $firstName,
-			'lastName'        => $lastName,
+			'firstName'       => $first_name,
+			'lastName'        => $last_name,
 			'email'           => $email,
-			'planId'          => $planId,
+			'planId'          => $plan_id,
 			'acceptTerms'     => true,
 			'tosAcceptedAt'   => gmdate( 'Y-m-d\TH:i:s\Z' ), // UTC ISO 8601 format.
 			'website_confirm' => $website_confirm, // Honeypot field.
@@ -535,7 +535,7 @@ class Phynite_Signup_Form_API {
 			'timestamp'   => current_time( 'c' ),
 			'type'        => 'response',
 			'status_code' => $status_code,
-			'response'    => $response_data ?: substr( $body, 0, 500 ),
+			'response'    => $response_data ? $response_data : substr( $body, 0, 500 ),
 		);
 
 		error_log( '[Phynite Signup Form] Response: ' . wp_json_encode( $log_data ) );

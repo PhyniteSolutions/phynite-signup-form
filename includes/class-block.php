@@ -298,7 +298,7 @@ class Phynite_Signup_Form_Block {
 				<!-- Website URL Field -->
 				<div class="phynite-form-field">
 					<label for="<?php echo esc_attr( $form_id ); ?>-website" class="phynite-form-label">
-						<?php _e( 'Website URL', 'phynite-signup-form' ); ?>
+						<?php esc_html_e( 'Website URL', 'phynite-signup-form' ); ?>
 						<span class="phynite-required">*</span>
 					</label>
 					<input type="url" 
@@ -315,7 +315,7 @@ class Phynite_Signup_Form_Block {
 				<div class="phynite-form-row">
 					<div class="phynite-form-field phynite-form-field-half">
 						<label for="<?php echo esc_attr( $form_id ); ?>-firstName" class="phynite-form-label">
-							<?php _e( 'First Name', 'phynite-signup-form' ); ?>
+							<?php esc_html_e( 'First Name', 'phynite-signup-form' ); ?>
 							<span class="phynite-required">*</span>
 						</label>
 						<input type="text" 
@@ -331,7 +331,7 @@ class Phynite_Signup_Form_Block {
 					
 					<div class="phynite-form-field phynite-form-field-half">
 						<label for="<?php echo esc_attr( $form_id ); ?>-lastName" class="phynite-form-label">
-							<?php _e( 'Last Name', 'phynite-signup-form' ); ?>
+							<?php esc_html_e( 'Last Name', 'phynite-signup-form' ); ?>
 							<span class="phynite-required">*</span>
 						</label>
 						<input type="text" 
@@ -349,7 +349,7 @@ class Phynite_Signup_Form_Block {
 				<!-- Email Field -->
 				<div class="phynite-form-field">
 					<label for="<?php echo esc_attr( $form_id ); ?>-email" class="phynite-form-label">
-						<?php _e( 'Email Address', 'phynite-signup-form' ); ?>
+						<?php esc_html_e( 'Email Address', 'phynite-signup-form' ); ?>
 						<span class="phynite-required">*</span>
 					</label>
 					<input type="email" 
@@ -367,7 +367,7 @@ class Phynite_Signup_Form_Block {
 					<!-- Plan Selection -->
 					<div class="phynite-form-field">
 						<fieldset class="phynite-plan-selection">
-							<legend class="phynite-form-label"><?php _e( 'Choose Your Plan', 'phynite-signup-form' ); ?></legend>
+							<legend class="phynite-form-label"><?php esc_html_e( 'Choose Your Plan', 'phynite-signup-form' ); ?></legend>
 							<div class="phynite-plans-container" <?php echo $is_editor ? 'data-loading="false"' : 'data-loading="true"'; ?>>
 								<?php if ( $is_editor ) : ?>
 									<!-- Static plans for editor preview -->
@@ -433,7 +433,7 @@ class Phynite_Signup_Form_Block {
 									</label>
 								<?php else : ?>
 									<div class="phynite-plans-loading">
-										<?php _e( 'Loading pricing...', 'phynite-signup-form' ); ?>
+										<?php esc_html_e( 'Loading pricing...', 'phynite-signup-form' ); ?>
 									</div>
 								<?php endif; ?>
 							</div>
@@ -455,13 +455,14 @@ class Phynite_Signup_Form_Block {
 						<span class="phynite-checkbox-text">
 							<?php
 							if ( $attributes['showTermsLinks'] ) {
+								/* translators: %1$s is the Terms of Service link, %2$s is the Privacy Policy link */
 								printf(
 									__( 'I agree to the %1$s and acknowledge the %2$s', 'phynite-signup-form' ),
 									'<a href="' . esc_url( $attributes['termsUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Terms of Service', 'phynite-signup-form' ) . '</a>',
 									'<a href="' . esc_url( $attributes['privacyUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Privacy Policy', 'phynite-signup-form' ) . '</a>'
 								);
 							} else {
-								_e( 'I agree to the Terms of Service and Privacy Policy', 'phynite-signup-form' );
+								esc_html_e( 'I agree to the Terms of Service and Privacy Policy', 'phynite-signup-form' );
 							}
 							?>
 							<span class="phynite-required">*</span>
@@ -492,7 +493,7 @@ class Phynite_Signup_Form_Block {
 										<animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
 									</circle>
 								</svg>
-								<?php _e( 'Processing...', 'phynite-signup-form' ); ?>
+								<?php esc_html_e( 'Processing...', 'phynite-signup-form' ); ?>
 							</span>
 						</button>
 					<?php endif; ?>
@@ -505,7 +506,7 @@ class Phynite_Signup_Form_Block {
 			
 			<?php if ( $attributes['showTermsLinks'] ) : ?>
 				<p class="phynite-form-footer">
-					<?php _e( 'By proceeding, you agree to our Terms of Service and acknowledge our Privacy Policy. Your subscription will automatically renew at the end of each billing period.', 'phynite-signup-form' ); ?>
+					<?php esc_html_e( 'By proceeding, you agree to our Terms of Service and acknowledge our Privacy Policy. Your subscription will automatically renew at the end of each billing period.', 'phynite-signup-form' ); ?>
 				</p>
 			<?php endif; ?>
 			
