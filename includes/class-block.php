@@ -455,8 +455,8 @@ class Phynite_Signup_Form_Block {
 						<span class="phynite-checkbox-text">
 							<?php
 							if ( $attributes['showTermsLinks'] ) {
-								/* translators: %1$s is the Terms of Service link, %2$s is the Privacy Policy link */
 								printf(
+									/* translators: %1$s is the Terms of Service link, %2$s is the Privacy Policy link */
 									__( 'I agree to the %1$s and acknowledge the %2$s', 'phynite-signup-form' ),
 									'<a href="' . esc_url( $attributes['termsUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Terms of Service', 'phynite-signup-form' ) . '</a>',
 									'<a href="' . esc_url( $attributes['privacyUrl'] ) . '" target="_blank" rel="noopener">' . __( 'Privacy Policy', 'phynite-signup-form' ) . '</a>'

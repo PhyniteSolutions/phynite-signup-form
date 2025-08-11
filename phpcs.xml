@@ -85,9 +85,6 @@
         <!-- Allow reasonable global access patterns -->
         <exclude name="WordPress.WP.GlobalVariablesOverride.Prohibited"/>
         
-        <!-- Allow missing translator comments for now -->
-        <exclude name="WordPress.WP.I18n.MissingTranslatorsComment"/>
-        
         <!-- Allow unused function parameters (often required by WordPress hooks) -->
         <exclude name="Generic.CodeAnalysis.UnusedFunctionParameter.Found"/>
         <exclude name="Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed"/>
