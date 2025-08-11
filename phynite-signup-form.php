@@ -257,11 +257,11 @@ class Phynite_Signup_Form {
 		// Remove options
 		delete_option( 'phynite_signup_form_settings' );
 
-		// Remove custom table
+		// Remove custom table.
 		global $wpdb;
 		$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}phynite_rate_limits" );
 
-		// Clean up any remaining transients
+		// Clean up any remaining transients.
 		$wpdb->query( "DELETE FROM {$wpdb->options} WHERE option_name LIKE '%phynite_signup_form%'" );
 	}
 
@@ -310,7 +310,7 @@ function phynite_signup_form_requirements_check() {
 			'admin_notices',
 			function () {
 				echo '<div class="notice notice-error"><p>';
-				echo __( 'Phynite Analytics Signup Form requires PHP 7.4 or higher. You are running PHP ' . PHP_VERSION, 'phynite-signup-form' );
+				echo esc_html__( 'Phynite Analytics Signup Form requires PHP 7.4 or higher.', 'phynite-signup-form' ) . ' ' . esc_html( PHP_VERSION );
 				echo '</p></div>';
 			}
 		);
@@ -322,7 +322,7 @@ function phynite_signup_form_requirements_check() {
 			'admin_notices',
 			function () {
 				echo '<div class="notice notice-error"><p>';
-				echo __( 'Phynite Analytics Signup Form requires cURL extension to be installed.', 'phynite-signup-form' );
+				echo esc_html__( 'Phynite Analytics Signup Form requires cURL extension to be installed.', 'phynite-signup-form' );
 				echo '</p></div>';
 			}
 		);
@@ -332,7 +332,7 @@ function phynite_signup_form_requirements_check() {
 	return true;
 }
 
-// Check requirements before initializing
+// Check requirements before initializing.
 if ( ! phynite_signup_form_requirements_check() ) {
 	return;
 }

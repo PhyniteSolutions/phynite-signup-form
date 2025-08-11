@@ -182,7 +182,7 @@ export async function validateFieldWithAvailability(fieldName, value) {
             }
         } catch (error) {
             // If availability check fails, don't block the user - just log and continue
-            console.error('Email availability check failed:', error);
+            // Email availability check failed
         }
     }
 
@@ -206,7 +206,7 @@ export async function validateFieldWithAvailability(fieldName, value) {
             }
         } catch (error) {
             // If availability check fails, don't block the user - just log and continue
-            console.error('Website availability check failed:', error);
+            // Website availability check failed
         }
     }
 

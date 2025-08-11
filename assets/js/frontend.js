@@ -114,7 +114,7 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
                     throw new Error('Invalid products data received');
                 }
             } catch (error) {
-                console.error('Failed to load products:', error);
+                // Failed to load products
                 this.showError('Unable to load pricing information. Please refresh the page and try again.');
             }
         }
@@ -395,7 +395,7 @@ import { validateField, validateFieldWithAvailability, validateFormData } from '
                 }
                 
             } catch (error) {
-                console.error('Form submission error:', error);
+                // Form submission error
                 this.showError(error.message || 'An unexpected error occurred. Please try again.');
                 this.setLoading(false);
             }

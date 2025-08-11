@@ -17,7 +17,7 @@
         Button,
         Spinner
     } = components;
-    const { InspectorControls, BlockControls } = blockEditor;
+    const { InspectorControls } = blockEditor;
     const { __ } = i18n;
     const ServerSideRender = serverSideRender || wp.components.ServerSideRender;
     
@@ -125,7 +125,7 @@
                     
                     setApiStatus(response && response.success ? 'connected' : 'error');
                 } catch (error) {
-                    console.error('API status check failed:', error);
+                    // API status check failed
                     setApiStatus('error');
                 }
             };
@@ -139,7 +139,7 @@
                     
                     setProducts(response || null);
                 } catch (error) {
-                    console.error('Failed to load products:', error);
+                    // Failed to load products
                     setProducts(null);
                 }
             };
@@ -150,7 +150,7 @@
                     await checkApiStatus();
                     await loadProducts();
                 } catch (error) {
-                    console.error('Connection test failed:', error);
+                    // Connection test failed
                 } finally {
                     setTestingConnection(false);
                 }

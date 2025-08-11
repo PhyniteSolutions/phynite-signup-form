@@ -1,8 +1,13 @@
 <?php
 /**
  * Mock Stewie API for Testing
+ *
+ * @package PhyniteSignupForm
  */
 
+/**
+ * Mock Stewie API responses for testing
+ */
 class MockStewie {
 
 	/**

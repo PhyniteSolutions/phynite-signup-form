@@ -149,7 +149,7 @@
                         PhyniteAdmin.showError('API connection failed: ' + response.data.message);
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function(xhr, status) {
                     let errorMessage = 'Connection test failed';
                     
                     if (status === 'timeout') {
@@ -496,10 +496,10 @@
 if (typeof wp !== 'undefined' && wp.hooks) {
     // Add hooks for other plugins to extend functionality
     wp.hooks.addAction('phynite.admin.init', 'phynite-signup-form', function() {
-        console.log('Phynite Admin initialized');
+        // Phynite Admin initialized
     });
     
-    wp.hooks.addFilter('phynite.admin.validate', 'phynite-signup-form', function(isValid, formData) {
+    wp.hooks.addFilter('phynite.admin.validate', 'phynite-signup-form', function(isValid) {
         // Allow other plugins to add validation
         return isValid;
     });
