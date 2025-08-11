@@ -1,0 +1,37 @@
+<svg width="200" height="64" viewBox="0 0 200 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#007cba;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#005a87;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon -->
+  <g transform="translate(8, 8)">
+    <!-- Chart bars -->
+    <rect x="0" y="32" width="6" height="16" fill="url(#gradient)" rx="1"/>
+    <rect x="8" y="24" width="6" height="24" fill="url(#gradient)" rx="1"/>
+    <rect x="16" y="16" width="6" height="32" fill="url(#gradient)" rx="1"/>
+    <rect x="24" y="8" width="6" height="40" fill="url(#gradient)" rx="1"/>
+    
+    <!-- Trending arrow -->
+    <path d="M35 15 L42 8 L39 8 L39 5 L45 5 L45 11 L42 11 L42 8" 
+          stroke="url(#gradient)" 
+          stroke-width="2" 
+          fill="none" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Text -->
+  <g transform="translate(60, 20)">
+    <text x="0" y="0" font-family="system-ui, -apple-system, sans-serif" 
+          font-size="18" font-weight="700" fill="url(#gradient)">
+      Phynite
+    </text>
+    <text x="0" y="16" font-family="system-ui, -apple-system, sans-serif" 
+          font-size="11" font-weight="400" fill="#666" letter-spacing="0.5px">
+      ANALYTICS
+    </text>
+  </g>
+</svg>

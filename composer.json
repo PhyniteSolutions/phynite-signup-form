@@ -1,0 +1,50 @@
+{
+    "name": "phynite/signup-form-wordpress-plugin",
+    "description": "WordPress plugin for Phynite Analytics signup forms with secure API integration",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Phynite Solutions, LLC",
+            "homepage": "https://phynitesolutions.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0,<7.5",
+        "symfony/deprecation-contracts": "^2.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "squizlabs/php_codesniffer": "^3.7",
+        "wp-coding-standards/wpcs": "^3.0",
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "doctrine/instantiator": "^1.0",
+        "yoast/phpunit-polyfills": "^1.0"
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "PhyniteSignupForm\\": "includes/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhyniteSignupForm\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-unit": "phpunit --testsuite=unit",
+        "test-integration": "phpunit --testsuite=integration",
+        "test-local": "phpunit --configuration phpunit-local.xml"
+    }
+}

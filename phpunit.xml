@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.0/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    backupGlobals="false"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    processIsolation="false"
+    stopOnFailure="false"
+    syntaxCheck="false"
+    verbose="true"
+    beStrictAboutTestsThatDoNotTestAnything="true"
+    beStrictAboutOutputDuringTests="true"
+    beStrictAboutTodoAnnotatedTests="true"
+    beStrictAboutResourceUsageDuringSmallTests="true"
+    enforceTimeLimit="true"
+    timeoutForSmallTests="10"
+    timeoutForMediumTests="30"
+    timeoutForLargeTests="60"
+>
+    <testsuites>
+        <testsuite name="Unit Tests">
+            <directory>./tests/</directory>
+            <exclude>./tests/utils/</exclude>
+        </testsuite>
+    </testsuites>
+    
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./includes/</directory>
+            <file>./phynite-signup-form.php</file>
+            <exclude>
+                <directory>./tests/</directory>
+                <directory>./vendor/</directory>
+                <directory>./node_modules/</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+    
+    <logging>
+        <log type="coverage-html" target="coverage/html"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+        <log type="coverage-clover" target="coverage/clover.xml"/>
+    </logging>
+    
+    <php>
+        <const name="WP_TESTS_PHPUNIT_POLYFILLS_PATH" value="./vendor/yoast/phpunit-polyfills"/>
+        <server name="SERVER_NAME" value="localhost"/>
+        <env name="WP_TESTS_DIR" value="/tmp/wordpress-tests-lib"/>
+        <env name="WP_CORE_DIR" value="/tmp/wordpress/"/>
+        <env name="WP_TESTS_DOMAIN" value="example.org"/>
+        <env name="WP_TESTS_EMAIL" value="admin@example.org"/>
+        <env name="WP_TESTS_TITLE" value="Test Site"/>
+        <env name="WP_PHP_BINARY" value="php"/>
+        <env name="WPLANG" value=""/>
+    </php>
+    
+    <groups>
+        <include>
+            <group>api</group>
+            <group>security</group>
+            <group>validation</group>
+            <group>block</group>
+            <group>admin</group>
+        </include>
+    </groups>
+</phpunit>

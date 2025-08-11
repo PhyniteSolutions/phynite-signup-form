@@ -1,0 +1,658 @@
+/**
+ * Block Editor Styles for Phynite Signup Form
+ */
+
+/* Block Editor Specific Styles */
+.phynite-signup-form-block-wrapper {
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+/* Block Placeholder */
+.phynite-signup-form-placeholder {
+    border: 2px dashed #e2e4e7;
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    background-color: #f8f9fa;
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.phynite-signup-form-placeholder::before {
+    content: "📊";
+    font-size: 32px;
+    display: block;
+    margin-bottom: 16px;
+    opacity: 0.6;
+}
+
+.phynite-signup-form-placeholder h3 {
+    margin: 0 0 12px 0;
+    color: #1e1e1e;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.phynite-signup-form-placeholder p {
+    margin: 0 0 20px 0;
+    color: #757575;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 400px;
+}
+
+/* Error State */
+.phynite-signup-form-placeholder.error {
+    border-color: #d63638;
+    background-color: #fcf0f1;
+}
+
+.phynite-signup-form-placeholder.error::before {
+    content: "⚠️";
+}
+
+.phynite-signup-form-placeholder.error h3 {
+    color: #d63638;
+}
+
+/* Loading State */
+.phynite-signup-form-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+}
+
+.phynite-signup-form-loading .components-spinner {
+    margin-bottom: 16px;
+}
+
+/* Block Inspector Panels */
+.phynite-block-inspector .components-panel__body {
+    border-bottom: 1px solid #e2e4e7;
+}
+
+.phynite-block-inspector .components-panel__body:last-child {
+    border-bottom: none;
+}
+
+/* API Status Indicators in Inspector */
+.phynite-api-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.phynite-api-status.connected {
+    background-color: #d1e7dd;
+    color: #0a3622;
+    border: 1px solid #a3cfbb;
+}
+
+.phynite-api-status.error {
+    background-color: #f8d7da;
+    color: #58151c;
+    border: 1px solid #f1919c;
+}
+
+.phynite-api-status.checking {
+    background-color: #fff3cd;
+    color: #664d03;
+    border: 1px solid #ffecb5;
+}
+
+.phynite-api-status::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: block;
+}
+
+.phynite-api-status.connected::before {
+    background-color: #00a32a;
+}
+
+.phynite-api-status.error::before {
+    background-color: #d63638;
+}
+
+.phynite-api-status.checking::before {
+    background-color: #f0b849;
+    animation: phynite-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes phynite-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Color Picker Enhancement */
+.phynite-color-picker-wrapper {
+    margin-bottom: 16px;
+}
+
+.phynite-color-picker-wrapper .components-base-control__label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #1e1e1e;
+}
+
+/* Preview Enhancement */
+.phynite-signup-form-preview {
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.phynite-signup-form-preview .phynite-signup-form-container {
+    margin: 0;
+    min-height: 400px;
+}
+
+/* Block Alignment */
+.wp-block-phynite-signup-form.alignleft {
+    float: left;
+    margin-right: 32px;
+    margin-bottom: 16px;
+}
+
+.wp-block-phynite-signup-form.alignright {
+    float: right;
+    margin-left: 32px;
+    margin-bottom: 16px;
+}
+
+.wp-block-phynite-signup-form.aligncenter {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-block-phynite-signup-form.alignwide,
+.wp-block-phynite-signup-form.alignfull {
+    clear: both;
+}
+
+/* Block Toolbar Enhancements */
+.phynite-signup-form-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.phynite-signup-form-toolbar .components-button {
+    height: 36px;
+    min-width: 36px;
+}
+
+/* Inspector Control Spacing */
+.phynite-block-inspector .components-base-control {
+    margin-bottom: 20px;
+}
+
+.phynite-block-inspector .components-base-control:last-child {
+    margin-bottom: 0;
+}
+
+/* Toggle Control Styling */
+.phynite-block-inspector .components-toggle-control {
+    align-items: flex-start;
+}
+
+.phynite-block-inspector .components-toggle-control .components-base-control__label {
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+/* Range Control Styling */
+.phynite-block-inspector .components-range-control {
+    margin-bottom: 24px;
+}
+
+.phynite-block-inspector .components-range-control .components-base-control__label {
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+/* Text Control Enhancement */
+.phynite-block-inspector .components-text-control {
+    margin-bottom: 20px;
+}
+
+.phynite-block-inspector .components-text-control .components-base-control__label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #1e1e1e;
+}
+
+.phynite-block-inspector .components-text-control .components-text-control__input {
+    border-color: #757575;
+    border-radius: 2px;
+}
+
+.phynite-block-inspector .components-text-control .components-text-control__input:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+/* Select Control Styling */
+.phynite-block-inspector .components-select-control {
+    margin-bottom: 20px;
+}
+
+.phynite-block-inspector .components-select-control .components-base-control__label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #1e1e1e;
+}
+
+.phynite-block-inspector .components-select-control select {
+    border-color: #757575;
+    border-radius: 2px;
+    min-height: 36px;
+}
+
+.phynite-block-inspector .components-select-control select:focus {
+    border-color: #007cba;
+    box-shadow: 0 0 0 1px #007cba;
+}
+
+/* Notice Components in Inspector */
+.phynite-block-inspector .components-notice {
+    margin: 16px 0;
+}
+
+.phynite-block-inspector .components-notice .components-notice__content {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Button Styling in Inspector */
+.phynite-block-inspector .components-button {
+    height: auto;
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.phynite-block-inspector .components-button.is-primary {
+    background-color: #007cba;
+    border-color: #007cba;
+}
+
+.phynite-block-inspector .components-button.is-primary:hover {
+    background-color: #005a87;
+    border-color: #005a87;
+}
+
+.phynite-block-inspector .components-button.is-secondary {
+    color: #007cba;
+    border-color: #007cba;
+}
+
+.phynite-block-inspector .components-button.is-secondary:hover {
+    color: #005a87;
+    border-color: #005a87;
+}
+
+/* Help Text */
+.phynite-help-text {
+    font-size: 12px;
+    color: #757575;
+    font-style: italic;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* Dividers */
+.phynite-divider {
+    border-bottom: 1px solid #e2e4e7;
+    margin: 20px 0;
+}
+
+/* Form Preview in Editor */
+.editor-styles-wrapper .phynite-signup-form-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Server-Side Render Preview Styles */
+.phynite-signup-form-preview-container {
+    border: 1px solid #e2e4e7;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.phynite-signup-form-preview-container > div:first-child {
+    padding: 8px 12px;
+    background-color: #f6f7f7;
+    border-bottom: 1px solid #e2e4e7;
+    font-size: 11px;
+    color: #646970;
+    text-align: center;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Editor Preview Form Styling */
+.phynite-signup-form-container.is-editor-preview {
+    pointer-events: none; /* Disable interactions in preview */
+    padding: 20px;
+    min-height: unset;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-input {
+    background-color: #f6f7f7;
+    border-color: #dcdcde;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-submit {
+    cursor: not-allowed !important;
+    opacity: 0.8;
+    position: relative;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-preview-notice {
+    display: block;
+    margin-top: 4px;
+    font-size: 10px;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-plan-option {
+    pointer-events: none;
+    transition: none;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-plan-option:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Loading and Error States for ServerSideRender */
+.phynite-block-server-preview .components-placeholder {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border: 1px solid #e2e4e7;
+}
+
+.phynite-block-server-preview .components-spinner {
+    margin-bottom: 12px;
+}
+
+/* Error state styling */
+.phynite-signup-form-error {
+    padding: 20px;
+    background: #fcf0f1;
+    border: 1px solid #f087a1;
+    color: #d63638;
+    text-align: center;
+    border-radius: 4px;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Ensure form elements look consistent in preview */
+.phynite-signup-form-container.is-editor-preview .phynite-form-field {
+    margin-bottom: 16px;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #1e1e1e;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-required {
+    color: #d63638;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #8c8f94;
+    border-radius: 2px;
+    font-size: 14px;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.phynite-signup-form-container.is-editor-preview .phynite-form-field-half {
+    flex: 1;
+}
+
+/* Style Preview Indicators */
+.phynite-style-preview-header {
+    padding: 8px 12px;
+    background: #f6f7f7;
+    border-bottom: 1px solid #e2e4e7;
+    font-size: 11px;
+    color: #646970;
+    text-align: center;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.phynite-style-preview-header::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00a32a;
+}
+
+/* Style-specific preview indicators */
+.phynite-signup-form-container[data-style="minimal"].is-editor-preview::after {
+    content: 'MINIMAL STYLE';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.phynite-signup-form-container[data-style="modern"].is-editor-preview::after {
+    content: 'MODERN STYLE';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: linear-gradient(135deg, #007cba 0%, #0ea5e9 100%);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.phynite-signup-form-container[data-style="compact"].is-editor-preview::after {
+    content: 'COMPACT STYLE';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(214, 54, 56, 0.9);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.phynite-signup-form-container[data-style="card"].is-editor-preview::after {
+    content: 'CARD STYLE';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(16, 185, 129, 0.9);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.phynite-signup-form-container[data-style="default"].is-editor-preview::after {
+    content: 'DEFAULT STYLE';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: rgba(117, 117, 117, 0.9);
+    color: white;
+    padding: 2px 6px;
+    font-size: 9px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* Ensure preview container has relative positioning for style indicators */
+.phynite-signup-form-preview-container {
+    position: relative;
+}
+
+/* Block Appender Styling */
+.phynite-block-appender {
+    border: 2px dashed #e2e4e7;
+    border-radius: 4px;
+    padding: 40px 20px;
+    text-align: center;
+    background: transparent;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.phynite-block-appender:hover {
+    border-color: #007cba;
+    background-color: #f0f8ff;
+}
+
+.phynite-block-appender-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.phynite-block-appender-icon {
+    width: 48px;
+    height: 48px;
+    opacity: 0.6;
+}
+
+.phynite-block-appender-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1e1e1e;
+    margin: 0;
+}
+
+.phynite-block-appender-description {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+}
+
+/* Responsive Inspector */
+@media (max-width: 782px) {
+    .phynite-block-inspector .components-panel {
+        margin: 0 -16px;
+    }
+    
+    .phynite-block-inspector .components-panel__body {
+        padding: 16px;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .phynite-signup-form-placeholder {
+        background-color: #1e1e1e;
+        border-color: #3c434a;
+    }
+    
+    .phynite-signup-form-placeholder h3 {
+        color: #f0f0f1;
+    }
+    
+    .phynite-signup-form-placeholder p {
+        color: #c3c4c7;
+    }
+    
+    .phynite-signup-form-loading {
+        background-color: #1e1e1e;
+        border-color: #3c434a;
+    }
+    
+    .phynite-signup-form-preview {
+        border-color: #3c434a;
+        background-color: #1e1e1e;
+    }
+}
+
+/* Print Styles for Block Editor */
+@media print {
+    .phynite-signup-form-block-wrapper {
+        color: black !important;
+        background: white !important;
+    }
+    
+    .phynite-block-inspector,
+    .block-editor-block-toolbar {
+        display: none !important;
+    }
+}
