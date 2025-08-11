@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Check if we meet minimum requirements
  */
 function phynite_signup_form_requirements_check() {
-	if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
+	if ( version_compare( PHP_VERSION, '8.3', '<' ) ) {
 		add_action(
 			'admin_notices',
 			function () {
 				echo '<div class="notice notice-error"><p>';
-				echo esc_html__( 'Phynite Analytics Signup Form requires PHP 7.4 or higher.', 'phynite-signup-form' ) . ' ' . esc_html( PHP_VERSION );
+				echo esc_html__( 'Phynite Analytics Signup Form requires PHP 8.3 or higher.', 'phynite-signup-form' ) . ' ' . esc_html( PHP_VERSION );
 				echo '</p></div>';
 			}
 		);

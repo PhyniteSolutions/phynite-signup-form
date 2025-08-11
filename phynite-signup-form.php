@@ -4,8 +4,8 @@
  * Plugin URI: https://phynitesolutions.com
  * Description: A WordPress plugin that provides a customizable Gutenberg block for Phynite Analytics signup forms with secure API integration.
  * Version: 1.0.0
- * Requires at least: 5.8
- * Requires PHP: 7.4
+ * Requires at least: 6.8
+ * Requires PHP: 8.3
  * Author: Phynite Solutions
  * Author URI: https://phynitesolutions.com
  * License: GPL v2 or later
