@@ -1,13 +1,18 @@
 <?php
 /**
  * Gutenberg Block Class
+ *
+ * @package PhyniteSignupForm
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Gutenberg block handler for Phynite Signup Form
+ */
 class Phynite_Signup_Form_Block {
 
 	/**
@@ -23,7 +28,7 @@ class Phynite_Signup_Form_Block {
 	 * Register frontend assets for editor preview
 	 */
 	public function register_frontend_assets() {
-		// Register frontend script for editor use
+		// Register frontend script for editor use.
 		wp_register_script(
 			'phynite-signup-form-frontend',
 			PHYNITE_SIGNUP_FORM_PLUGIN_URL . 'dist/js/frontend.js',
@@ -32,7 +37,7 @@ class Phynite_Signup_Form_Block {
 			true
 		);
 
-		// Localize frontend script with data
+		// Localize frontend script with data.
 		wp_localize_script(
 			'phynite-signup-form-frontend',
 			'phyniteSignupForm',
@@ -48,7 +53,7 @@ class Phynite_Signup_Form_Block {
 	 * Register the block
 	 */
 	public function register_block() {
-		// Register block script
+		// Register block script.
 		wp_register_script(
 			'phynite-signup-form-block',
 			PHYNITE_SIGNUP_FORM_PLUGIN_URL . 'dist/js/block.js',
@@ -65,7 +70,7 @@ class Phynite_Signup_Form_Block {
 			true
 		);
 
-		// Register block style
+		// Register block style.
 		wp_register_style(
 			'phynite-signup-form-block-editor',
 			PHYNITE_SIGNUP_FORM_PLUGIN_URL . 'dist/css/block-editor-styles.css',
@@ -73,7 +78,7 @@ class Phynite_Signup_Form_Block {
 			PHYNITE_SIGNUP_FORM_VERSION
 		);
 
-		// Register frontend style
+		// Register frontend style.
 		wp_register_style(
 			'phynite-signup-form-frontend',
 			PHYNITE_SIGNUP_FORM_PLUGIN_URL . 'dist/css/frontend-styles.css',
@@ -81,7 +86,7 @@ class Phynite_Signup_Form_Block {
 			PHYNITE_SIGNUP_FORM_VERSION
 		);
 
-		// Localize script with data
+		// Localize script with data.
 		wp_localize_script(
 			'phynite-signup-form-block',
 			'phyniteSignupBlockData',
@@ -93,7 +98,7 @@ class Phynite_Signup_Form_Block {
 			)
 		);
 
-		// Register the block
+		// Register the block.
 		register_block_type(
 			'phynite/signup-form',
 			array(
@@ -222,10 +227,10 @@ class Phynite_Signup_Form_Block {
 	 * Render block on frontend
 	 */
 	public function render_block( $attributes, $content ) {
-		// Check if we're in the editor context
+		// Check if we're in the editor context.
 		$is_editor = defined( 'REST_REQUEST' ) && REST_REQUEST && isset( $_GET['context'] ) && $_GET['context'] === 'edit';
 
-		// Don't render if API is not configured (unless in editor)
+		// Don't render if API is not configured (unless in editor).
 		$settings = get_option( 'phynite_signup_form_settings', array() );
 		if ( empty( $settings['api_key'] ) && ! $is_editor ) {
 			return '<div class="phynite-signup-form-error">' .
@@ -233,32 +238,32 @@ class Phynite_Signup_Form_Block {
 					'</div>';
 		}
 
-		// For editor preview, show configuration notice if API not configured
+		// For editor preview, show configuration notice if API not configured.
 		if ( empty( $settings['api_key'] ) && $is_editor ) {
 			return '<div class="phynite-signup-form-error" style="padding: 20px; background: #fcf0f1; border: 1px solid #f087a1; color: #d63638; text-align: center;">' .
 					__( 'API configuration required. Please configure your Stewie API key in the plugin settings to see the live preview.', 'phynite-signup-form' ) .
 					'</div>';
 		}
 
-		// Enqueue assets based on context
+		// Enqueue assets based on context.
 		if ( $is_editor ) {
-			// In editor, enqueue both editor and frontend styles
+			// In editor, enqueue both editor and frontend styles.
 			wp_enqueue_style( 'phynite-signup-form-block-editor' );
 			wp_enqueue_style( 'phynite-signup-form-frontend' );
-			// Don't enqueue interactive JS in editor context
+			// Don't enqueue interactive JS in editor context.
 		} else {
-			// On frontend, enqueue normal assets
+			// On frontend, enqueue normal assets.
 			wp_enqueue_script( 'phynite-signup-form-frontend' );
 			wp_enqueue_style( 'phynite-signup-form-frontend' );
 		}
 
-		// Generate unique form ID
+		// Generate unique form ID.
 		$form_id = 'phynite-signup-form-' . wp_generate_uuid4();
 
-		// Merge attributes with defaults
+		// Merge attributes with defaults.
 		$attributes = wp_parse_args( $attributes, $this->get_default_attributes() );
 
-		// Start output buffering
+		// Start output buffering.
 		ob_start();
 		?>
 		

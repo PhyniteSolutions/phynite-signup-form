@@ -26,6 +26,9 @@ define( 'PHYNITE_SIGNUP_FORM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PHYNITE_SIGNUP_FORM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'PHYNITE_SIGNUP_FORM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
+// Include bootstrap functions.
+require_once PHYNITE_SIGNUP_FORM_PLUGIN_DIR . 'includes/functions.php';
+
 /**
  * Main Plugin Class
  */
@@ -291,48 +294,10 @@ class Phynite_Signup_Form {
 	}
 }
 
-/**
- * Initialize the plugin
- */
-function phynite_signup_form_init() {
-	return Phynite_Signup_Form::get_instance();
-}
-
-// Start the plugin
-add_action( 'plugins_loaded', 'phynite_signup_form_init' );
-
-/**
- * Check if we meet minimum requirements
- */
-function phynite_signup_form_requirements_check() {
-	if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
-		add_action(
-			'admin_notices',
-			function () {
-				echo '<div class="notice notice-error"><p>';
-				echo esc_html__( 'Phynite Analytics Signup Form requires PHP 7.4 or higher.', 'phynite-signup-form' ) . ' ' . esc_html( PHP_VERSION );
-				echo '</p></div>';
-			}
-		);
-		return false;
-	}
-
-	if ( ! function_exists( 'curl_init' ) ) {
-		add_action(
-			'admin_notices',
-			function () {
-				echo '<div class="notice notice-error"><p>';
-				echo esc_html__( 'Phynite Analytics Signup Form requires cURL extension to be installed.', 'phynite-signup-form' );
-				echo '</p></div>';
-			}
-		);
-		return false;
-	}
-
-	return true;
-}
-
 // Check requirements before initializing.
 if ( ! phynite_signup_form_requirements_check() ) {
 	return;
 }
+
+// Start the plugin.
+add_action( 'plugins_loaded', 'phynite_signup_form_init' );

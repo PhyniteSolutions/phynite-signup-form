@@ -1,22 +1,31 @@
 <?php
 /**
  * Admin Settings Class
+ *
+ * @package PhyniteSignupForm
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Admin interface for Phynite Signup Form
+ */
 class Phynite_Signup_Form_Admin {
 
 	/**
 	 * Settings group name
+	 *
+	 * @var string
 	 */
 	private $settings_group = 'phynite_signup_form_settings';
 
 	/**
 	 * Settings option name
+	 *
+	 * @var string
 	 */
 	private $settings_option = 'phynite_signup_form_settings';
 
@@ -24,7 +33,7 @@ class Phynite_Signup_Form_Admin {
 	 * Constructor
 	 */
 	public function __construct() {
-		// Constructor intentionally left empty
+		// Constructor intentionally left empty.
 	}
 
 	/**
@@ -44,14 +53,14 @@ class Phynite_Signup_Form_Admin {
 	 * Initialize admin settings
 	 */
 	public function init() {
-		// Register settings
+		// Register settings.
 		register_setting(
 			$this->settings_group,
 			$this->settings_option,
 			array( $this, 'sanitize_settings' )
 		);
 
-		// Add settings sections
+		// Add settings sections.
 		add_settings_section(
 			'phynite_api_settings',
 			__( 'API Configuration', 'phynite-signup-form' ),
@@ -73,10 +82,10 @@ class Phynite_Signup_Form_Admin {
 			'phynite-signup-form'
 		);
 
-		// Add settings fields
+		// Add settings fields.
 		$this->add_settings_fields();
 
-		// Enqueue admin assets
+		// Enqueue admin assets.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 	}
 
@@ -84,7 +93,7 @@ class Phynite_Signup_Form_Admin {
 	 * Add settings fields
 	 */
 	private function add_settings_fields() {
-		// API Configuration Fields
+		// API Configuration Fields.
 		add_settings_field(
 			'api_key',
 			__( 'Stewie API Key', 'phynite-signup-form' ),
@@ -117,7 +126,7 @@ class Phynite_Signup_Form_Admin {
 			'phynite_api_settings'
 		);
 
-		// Form Configuration Fields
+		// Form Configuration Fields.
 		add_settings_field(
 			'form_style',
 			__( 'Form Style', 'phynite-signup-form' ),
@@ -142,7 +151,7 @@ class Phynite_Signup_Form_Admin {
 			'phynite_form_settings'
 		);
 
-		// Security Settings Fields
+		// Security Settings Fields.
 		add_settings_field(
 			'rate_limit',
 			__( 'Rate Limit (per minute)', 'phynite-signup-form' ),
@@ -172,12 +181,12 @@ class Phynite_Signup_Form_Admin {
 	 * Settings page callback
 	 */
 	public function settings_page() {
-		// Check user capabilities
+		// Check user capabilities.
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( __( 'You do not have sufficient permissions to access this page.', 'phynite-signup-form' ) );
 		}
 
-		// Test API connection if requested
+		// Test API connection if requested.
 		if ( isset( $_GET['test_api'] ) && wp_verify_nonce( $_GET['_wpnonce'], 'test_api_connection' ) ) {
 			$this->test_api_connection();
 		}
@@ -368,58 +377,58 @@ class Phynite_Signup_Form_Admin {
 	public function sanitize_settings( $input ) {
 		$sanitized = array();
 
-		// Sanitize API key
+		// Sanitize API key.
 		if ( isset( $input['api_key'] ) ) {
 			$sanitized['api_key'] = sanitize_text_field( $input['api_key'] );
 		}
 
-		// Sanitize Stewie URL (allow HTTP for localhost development)
+		// Sanitize Stewie URL (allow HTTP for localhost development).
 		if ( isset( $input['stewie_url'] ) ) {
 			$url = esc_url_raw( $input['stewie_url'] );
-			// Allow HTTP for localhost development
+			// Allow HTTP for localhost development.
 			if ( strpos( $url, 'http://localhost' ) === 0 || strpos( $url, 'https://' ) === 0 ) {
 				$sanitized['stewie_url'] = $url;
 			} else {
-				$sanitized['stewie_url'] = 'https://api.phynitesolutions.com'; // Default fallback
+				$sanitized['stewie_url'] = 'https://api.phynitesolutions.com'; // Default fallback.
 			}
 		}
 
-		// Sanitize environment
+		// Sanitize environment.
 		if ( isset( $input['environment'] ) ) {
 			$allowed_environments     = array( 'production', 'staging', 'development' );
 			$sanitized['environment'] = in_array( $input['environment'], $allowed_environments ) ? $input['environment'] : 'production';
 		}
 
-		// Sanitize Stripe publishable key
+		// Sanitize Stripe publishable key.
 		if ( isset( $input['stripe_publishable_key'] ) ) {
 			$key = sanitize_text_field( $input['stripe_publishable_key'] );
-			// Validate that it's a proper Stripe publishable key format
+			// Validate that it's a proper Stripe publishable key format.
 			if ( empty( $key ) || preg_match( '/^pk_(test_|live_)[a-zA-Z0-9]+$/', $key ) ) {
 				$sanitized['stripe_publishable_key'] = $key;
 			}
 		}
 
-		// Sanitize form style
+		// Sanitize form style.
 		if ( isset( $input['form_style'] ) ) {
 			$allowed_styles          = array( 'default', 'minimal', 'modern', 'compact' );
 			$sanitized['form_style'] = in_array( $input['form_style'], $allowed_styles ) ? $input['form_style'] : 'default';
 		}
 
-		// Sanitize primary color
+		// Sanitize primary color.
 		if ( isset( $input['primary_color'] ) ) {
 			$sanitized['primary_color'] = sanitize_hex_color( $input['primary_color'] );
 		}
 
-		// Sanitize boolean fields
+		// Sanitize boolean fields.
 		$sanitized['show_terms_links'] = isset( $input['show_terms_links'] ) && $input['show_terms_links'] === '1';
 		$sanitized['enable_logging']   = isset( $input['enable_logging'] ) && $input['enable_logging'] === '1';
 
-		// Sanitize rate limit
+		// Sanitize rate limit.
 		if ( isset( $input['rate_limit'] ) ) {
 			$sanitized['rate_limit'] = max( 1, min( 60, intval( $input['rate_limit'] ) ) );
 		}
 
-		// Sanitize allowed domains
+		// Sanitize allowed domains.
 		if ( isset( $input['allowed_domains'] ) ) {
 			$domains           = array_filter( array_map( 'trim', explode( "\n", $input['allowed_domains'] ) ) );
 			$sanitized_domains = array();

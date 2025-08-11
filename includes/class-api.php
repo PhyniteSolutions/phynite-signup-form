@@ -1,17 +1,24 @@
 <?php
 /**
  * Stewie API Integration Class
+ *
+ * @package PhyniteSignupForm
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * API handler for Stewie integration
+ */
 class Phynite_Signup_Form_API {
 
 	/**
 	 * Settings
+	 *
+	 * @var array
 	 */
 	private $settings;
 
@@ -74,7 +81,7 @@ class Phynite_Signup_Form_API {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_products' ),
-				'permission_callback' => '__return_true', // Public endpoint
+				'permission_callback' => '__return_true', // Public endpoint.
 			)
 		);
 
@@ -108,7 +115,7 @@ class Phynite_Signup_Form_API {
 	 * Check if email exists in Stewie
 	 */
 	public function check_email_exists( $request ) {
-		// Rate limiting check
+		// Rate limiting check.
 		if ( ! $this->check_rate_limit() ) {
 			return new WP_Error( 'rate_limit_exceeded', __( 'Too many requests. Please try again later.', 'phynite-signup-form' ), array( 'status' => 429 ) );
 		}
@@ -145,7 +152,7 @@ class Phynite_Signup_Form_API {
 	 * Check if website exists in Stewie
 	 */
 	public function check_website_exists( $request ) {
-		// Rate limiting check
+		// Rate limiting check.
 		if ( ! $this->check_rate_limit() ) {
 			return new WP_Error( 'rate_limit_exceeded', __( 'Too many requests. Please try again later.', 'phynite-signup-form' ), array( 'status' => 429 ) );
 		}
@@ -156,7 +163,7 @@ class Phynite_Signup_Form_API {
 			return new WP_Error( 'invalid_website', __( 'Invalid website URL.', 'phynite-signup-form' ), array( 'status' => 400 ) );
 		}
 
-		// Validate protocol and path
+		// Validate protocol and path.
 		$parsed = parse_url( $website );
 		if ( ! in_array( $parsed['scheme'], array( 'http', 'https' ) ) ) {
 			return new WP_Error( 'invalid_protocol', __( 'Website must use http or https protocol.', 'phynite-signup-form' ), array( 'status' => 400 ) );
@@ -188,12 +195,12 @@ class Phynite_Signup_Form_API {
 	 * Create checkout session
 	 */
 	public function create_checkout_session( $request ) {
-		// Rate limiting check
+		// Rate limiting check.
 		if ( ! $this->check_rate_limit() ) {
 			return new WP_Error( 'rate_limit_exceeded', __( 'Too many requests. Please try again later.', 'phynite-signup-form' ), array( 'status' => 429 ) );
 		}
 
-		// Validate and sanitize input
+		// Validate and sanitize input.
 		$data = $this->validate_signup_data( $request );
 		if ( is_wp_error( $data ) ) {
 			return $data;
@@ -224,7 +231,7 @@ class Phynite_Signup_Form_API {
 	 * Get subscription products
 	 */
 	public function get_products( $request ) {
-		// Try to get from cache first
+		// Try to get from cache first.
 		$cached = get_transient( 'phynite_signup_form_products' );
 		if ( $cached !== false ) {
 			return rest_ensure_response( $cached );
@@ -239,7 +246,7 @@ class Phynite_Signup_Form_API {
 
 		$products = isset( $response['data'] ) ? $response['data'] : array();
 
-		// Cache for 1 hour
+		// Cache for 1 hour.
 		set_transient( 'phynite_signup_form_products', $products, HOUR_IN_SECONDS );
 
 		return rest_ensure_response( $products );
@@ -278,7 +285,7 @@ class Phynite_Signup_Form_API {
 	private function validate_signup_data( $request ) {
 		$errors = array();
 
-		// Get and sanitize data
+		// Get and sanitize data.
 		$website         = esc_url_raw( $request->get_param( 'website' ) );
 		$firstName       = sanitize_text_field( $request->get_param( 'firstName' ) );
 		$lastName        = sanitize_text_field( $request->get_param( 'lastName' ) );
@@ -287,7 +294,7 @@ class Phynite_Signup_Form_API {
 		$acceptTerms     = $request->get_param( 'acceptTerms' );
 		$website_confirm = sanitize_text_field( $request->get_param( 'website_confirm' ) );
 
-		// Validate website
+		// Validate website.
 		if ( empty( $website ) || ! filter_var( $website, FILTER_VALIDATE_URL ) ) {
 			$errors[] = __( 'Valid website URL is required.', 'phynite-signup-form' );
 		} else {
@@ -300,7 +307,7 @@ class Phynite_Signup_Form_API {
 			}
 		}
 
-		// Validate first name
+		// Validate first name.
 		if ( empty( $firstName ) ) {
 			$errors[] = __( 'First name is required.', 'phynite-signup-form' );
 		} elseif ( strlen( $firstName ) > 64 ) {
@@ -309,7 +316,7 @@ class Phynite_Signup_Form_API {
 			$errors[] = __( 'First name can only contain letters, spaces, hyphens, and apostrophes.', 'phynite-signup-form' );
 		}
 
-		// Validate last name
+		// Validate last name.
 		if ( empty( $lastName ) ) {
 			$errors[] = __( 'Last name is required.', 'phynite-signup-form' );
 		} elseif ( strlen( $lastName ) > 128 ) {
@@ -318,25 +325,25 @@ class Phynite_Signup_Form_API {
 			$errors[] = __( 'Last name can only contain letters, spaces, hyphens, and apostrophes.', 'phynite-signup-form' );
 		}
 
-		// Validate email
+		// Validate email.
 		if ( empty( $email ) || ! is_email( $email ) ) {
 			$errors[] = __( 'Valid email address is required.', 'phynite-signup-form' );
 		} elseif ( strlen( $email ) > 255 ) {
 			$errors[] = __( 'Email address must be less than 255 characters.', 'phynite-signup-form' );
 		}
 
-		// Validate plan
+		// Validate plan.
 		$allowed_plans = array( 'monthly', 'yearly' );
 		if ( empty( $planId ) || ! in_array( $planId, $allowed_plans ) ) {
 			$errors[] = __( 'Please select a valid subscription plan.', 'phynite-signup-form' );
 		}
 
-		// Validate terms acceptance
+		// Validate terms acceptance.
 		if ( ! $acceptTerms ) {
 			$errors[] = __( 'You must accept the Terms of Service to continue.', 'phynite-signup-form' );
 		}
 
-		// Validate honeypot field (should be empty for legitimate users)
+		// Validate honeypot field (should be empty for legitimate users).
 		if ( ! empty( $website_confirm ) ) {
 			$errors[] = __( 'Bot detected.', 'phynite-signup-form' );
 		}
@@ -352,8 +359,8 @@ class Phynite_Signup_Form_API {
 			'email'           => $email,
 			'planId'          => $planId,
 			'acceptTerms'     => true,
-			'tosAcceptedAt'   => gmdate( 'Y-m-d\TH:i:s\Z' ), // UTC ISO 8601 format
-			'website_confirm' => $website_confirm, // Honeypot field
+			'tosAcceptedAt'   => gmdate( 'Y-m-d\TH:i:s\Z' ), // UTC ISO 8601 format.
+			'website_confirm' => $website_confirm, // Honeypot field.
 		);
 	}
 
@@ -423,10 +430,10 @@ class Phynite_Signup_Form_API {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'phynite_rate_limits';
 
-		// Clean up old entries
+		// Clean up old entries.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM $table_name WHERE last_attempt < %s", date( 'Y-m-d H:i:s', strtotime( '-1 minute' ) ) ) );
 
-		// Check current attempts
+		// Check current attempts.
 		$current_attempts = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT attempts FROM $table_name WHERE ip_address = %s AND last_attempt > %s",
@@ -439,7 +446,7 @@ class Phynite_Signup_Form_API {
 			return false;
 		}
 
-		// Update or insert attempt record
+		// Update or insert attempt record.
 		$wpdb->query(
 			$wpdb->prepare(
 				"INSERT INTO $table_name (ip_address, attempts, last_attempt) 

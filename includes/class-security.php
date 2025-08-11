@@ -1,17 +1,24 @@
 <?php
 /**
  * Security Utilities Class
+ *
+ * @package PhyniteSignupForm
  */
 
-// Prevent direct access
+// Prevent direct access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Security utilities for Phynite Signup Form
+ */
 class Phynite_Signup_Form_Security {
 
 	/**
 	 * Settings
+	 *
+	 * @var array
 	 */
 	private $settings;
 
@@ -27,13 +34,13 @@ class Phynite_Signup_Form_Security {
 	 * Initialize security measures
 	 */
 	private function init() {
-		// Add security headers
+		// Add security headers.
 		add_action( 'send_headers', array( $this, 'add_security_headers' ) );
 
-		// Clean up rate limiting table periodically
+		// Clean up rate limiting table periodically.
 		add_action( 'wp_scheduled_delete', array( $this, 'cleanup_rate_limit_table' ) );
 
-		// Add custom sanitization functions
+		// Add custom sanitization functions.
 		add_filter( 'wp_kses_allowed_html', array( $this, 'allow_svg_in_forms' ), 10, 2 );
 	}
 
@@ -43,12 +50,12 @@ class Phynite_Signup_Form_Security {
 	public function add_security_headers() {
 		global $pagenow;
 
-		// Only add headers for admin pages and REST API requests
+		// Only add headers for admin pages and REST API requests.
 		if ( ! is_admin() && strpos( $_SERVER['REQUEST_URI'], '/wp-json/phynite-signup/' ) === false ) {
 			return;
 		}
 
-		// Content Security Policy
+		// Content Security Policy.
 		if ( ! headers_sent() ) {
 			header( 'X-Content-Type-Options: nosniff' );
 			header( 'X-Frame-Options: SAMEORIGIN' );
@@ -70,7 +77,7 @@ class Phynite_Signup_Form_Security {
 
 			case 'name':
 				$sanitized = sanitize_text_field( $input );
-				// Only allow letters, spaces, hyphens, and apostrophes
+				// Only allow letters, spaces, hyphens, and apostrophes.
 				return preg_replace( "/[^a-zA-Z\s'-]/", '', $sanitized );
 
 			case 'plan':
@@ -91,7 +98,7 @@ class Phynite_Signup_Form_Security {
 	public static function is_disposable_email( $email ) {
 		$domain = substr( strrchr( $email, '@' ), 1 );
 
-		// List of common disposable email domains
+		// List of common disposable email domains.
 		$disposable_domains = array(
 			'10minutemail.com',
 			'guerrillamail.com',
@@ -122,12 +129,12 @@ class Phynite_Signup_Form_Security {
 		$allowed_domains = isset( $this->settings['allowed_domains'] ) ? $this->settings['allowed_domains'] : '';
 
 		if ( empty( $allowed_domains ) ) {
-			return true; // Allow all if not configured
+			return true; // Allow all if not configured.
 		}
 
 		$referer = isset( $_SERVER['HTTP_REFERER'] ) ? $_SERVER['HTTP_REFERER'] : '';
 		if ( empty( $referer ) ) {
-			return false; // Block if no referer and domains are restricted
+			return false; // Block if no referer and domains are restricted.
 		}
 
 		$referer_domain = parse_url( $referer, PHP_URL_HOST );
@@ -148,7 +155,7 @@ class Phynite_Signup_Form_Security {
 	public static function is_bot_request( $user_agent = null, $additional_checks = array() ) {
 		$user_agent = $user_agent ?: ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? $_SERVER['HTTP_USER_AGENT'] : '' );
 
-		// Common bot signatures
+		// Common bot signatures.
 		$bot_patterns = array(
 			'/bot/i',
 			'/crawler/i',
@@ -173,19 +180,19 @@ class Phynite_Signup_Form_Security {
 			}
 		}
 
-		// Check for missing or suspicious headers
+		// Check for missing or suspicious headers.
 		if ( empty( $user_agent ) ) {
 			return true;
 		}
 
-		// Check honeypot field if provided
+		// Check honeypot field if provided.
 		if ( isset( $additional_checks['honeypot'] ) && ! empty( $additional_checks['honeypot'] ) ) {
 			return true;
 		}
 
-		// Check for suspicious timing (too fast)
+		// Check for suspicious timing (too fast).
 		if ( isset( $additional_checks['timing'] ) && $additional_checks['timing'] < 2000 ) {
-			return true; // Submitted in less than 2 seconds
+			return true; // Submitted in less than 2 seconds.
 		}
 
 		return false;
@@ -211,7 +218,7 @@ class Phynite_Signup_Form_Security {
 	public function check_rate_limit( $ip = null ) {
 		$ip = $ip ?: $this->get_client_ip();
 
-		// Allow localhost and private IPs during development
+		// Allow localhost and private IPs during development.
 		if ( $this->is_development_environment() && $this->is_private_ip( $ip ) ) {
 			return true;
 		}
@@ -221,7 +228,7 @@ class Phynite_Signup_Form_Security {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'phynite_rate_limits';
 
-		// Check if IP is currently blocked
+		// Check if IP is currently blocked.
 		$blocked_until = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT blocked_until FROM $table_name WHERE ip_address = %s AND blocked_until > %s",
@@ -234,7 +241,7 @@ class Phynite_Signup_Form_Security {
 			return false;
 		}
 
-		// Clean up old entries (older than 1 minute)
+		// Clean up old entries (older than 1 minute).
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $table_name WHERE last_attempt < %s AND blocked_until IS NULL",
@@ -242,7 +249,7 @@ class Phynite_Signup_Form_Security {
 			)
 		);
 
-		// Get current attempts in the last minute
+		// Get current attempts in the last minute.
 		$current_attempts = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT attempts FROM $table_name WHERE ip_address = %s AND last_attempt > %s",
@@ -254,7 +261,7 @@ class Phynite_Signup_Form_Security {
 		$current_attempts = intval( $current_attempts );
 
 		if ( $current_attempts >= $rate_limit ) {
-			// Block IP for 5 minutes after exceeding rate limit
+			// Block IP for 5 minutes after exceeding rate limit.
 			$wpdb->query(
 				$wpdb->prepare(
 					"UPDATE $table_name SET blocked_until = %s WHERE ip_address = %s",
@@ -274,7 +281,7 @@ class Phynite_Signup_Form_Security {
 			return false;
 		}
 
-		// Update or insert attempt record
+		// Update or insert attempt record.
 		$wpdb->query(
 			$wpdb->prepare(
 				"INSERT INTO $table_name (ip_address, attempts, last_attempt) 
@@ -294,13 +301,13 @@ class Phynite_Signup_Form_Security {
 	 */
 	private function get_client_ip() {
 		$ip_keys = array(
-			'HTTP_CF_CONNECTING_IP',     // Cloudflare
-			'HTTP_X_FORWARDED_FOR',      // Load balancer/proxy
-			'HTTP_X_FORWARDED',          // Proxy
-			'HTTP_X_CLUSTER_CLIENT_IP',  // Cluster
-			'HTTP_FORWARDED_FOR',        // Proxy
-			'HTTP_FORWARDED',            // Proxy
-			'REMOTE_ADDR',                // Standard
+			'HTTP_CF_CONNECTING_IP',     // Cloudflare.
+			'HTTP_X_FORWARDED_FOR',      // Load balancer/proxy.
+			'HTTP_X_FORWARDED',          // Proxy.
+			'HTTP_X_CLUSTER_CLIENT_IP',  // Cluster.
+			'HTTP_FORWARDED_FOR',        // Proxy.
+			'HTTP_FORWARDED',            // Proxy.
+			'REMOTE_ADDR',                // Standard.
 		);
 
 		foreach ( $ip_keys as $key ) {
@@ -339,7 +346,7 @@ class Phynite_Signup_Form_Security {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'phynite_rate_limits';
 
-		// Remove entries older than 24 hours
+		// Remove entries older than 24 hours.
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $table_name WHERE last_attempt < %s",
@@ -347,7 +354,7 @@ class Phynite_Signup_Form_Security {
 			)
 		);
 
-		// Remove expired blocks
+		// Remove expired blocks.
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM $table_name WHERE blocked_until IS NOT NULL AND blocked_until < %s",
@@ -370,7 +377,7 @@ class Phynite_Signup_Form_Security {
 
 		error_log( '[Phynite Signup Form Security] ' . wp_json_encode( $log_data ) );
 
-		// Optionally store in database for analysis
+		// Optionally store in database for analysis.
 		if ( $this->should_store_security_logs() ) {
 			$this->store_security_log( $log_data );
 		}
@@ -391,7 +398,7 @@ class Phynite_Signup_Form_Security {
 
 		$table_name = $wpdb->prefix . 'phynite_security_logs';
 
-		// Create table if it doesn't exist
+		// Create table if it doesn't exist.
 		$this->maybe_create_security_logs_table();
 
 		$wpdb->insert(
@@ -465,7 +472,7 @@ class Phynite_Signup_Form_Security {
 	 */
 	public static function encrypt_data( $data ) {
 		if ( ! function_exists( 'openssl_encrypt' ) ) {
-			return base64_encode( $data ); // Fallback to base64 encoding
+			return base64_encode( $data ); // Fallback to base64 encoding.
 		}
 
 		$key       = wp_salt( 'AUTH_SALT' );
@@ -480,7 +487,7 @@ class Phynite_Signup_Form_Security {
 	 */
 	public static function decrypt_data( $data ) {
 		if ( ! function_exists( 'openssl_decrypt' ) ) {
-			return base64_decode( $data ); // Fallback from base64 encoding
+			return base64_decode( $data ); // Fallback from base64 encoding.
 		}
 
 		$key       = wp_salt( 'AUTH_SALT' );
