@@ -21,6 +21,8 @@ import { initializeTracker } from './tracking.js';
             this.formStartTime = Date.now();
             this.formViewTime = Date.now();
             this.userHasInteracted = false;
+            this.emailValidating = false;
+            this.websiteValidating = false;
             this.isEditorPreview = this.form.closest('[data-is-preview="true"]').length > 0 || 
                                   (window.phyniteSignupForm && window.phyniteSignupForm.isEditor);
             
@@ -127,8 +129,17 @@ import { initializeTracker } from './tracking.js';
             
             // Input cleanup and interaction tracking
             this.form.find('input').on('input', (e) => {
-                this.clearFieldError($(e.target));
+                const field = $(e.target);
+                this.clearFieldError(field);
                 this.trackUserInteraction();
+                
+                // Clear validation loading if user starts typing during validation
+                if (field.attr('name') === 'email' && this.emailValidating) {
+                    this.hideFieldValidationLoading(field);
+                }
+                if (field.attr('name') === 'website' && this.websiteValidating) {
+                    this.hideFieldValidationLoading(field);
+                }
             });
             
             // Prevent honeypot field interaction
@@ -314,6 +325,24 @@ import { initializeTracker } from './tracking.js';
             });
         }
         
+        showFieldValidationLoading(field) {
+            const fieldContainer = field.closest('.phynite-form-field');
+            const loadingIndicator = fieldContainer.find('.phynite-field-loading');
+            if (loadingIndicator.length) {
+                loadingIndicator.show();
+                field.addClass('validating');
+            }
+        }
+        
+        hideFieldValidationLoading(field) {
+            const fieldContainer = field.closest('.phynite-form-field');
+            const loadingIndicator = fieldContainer.find('.phynite-field-loading');
+            if (loadingIndicator.length) {
+                loadingIndicator.hide();
+                field.removeClass('validating');
+            }
+        }
+        
         async validateWebsite() {
             const field = this.form.find('input[name="website"]');
             const value = field.val().trim();
@@ -323,16 +352,29 @@ import { initializeTracker } from './tracking.js';
                 return true;
             }
             
-            // Use unified Zod validation with availability checking
-            const validationResult = await validateFieldWithAvailability('website', value);
-            
-            if (!validationResult.success) {
-                this.showFieldError(field, validationResult.error);
+            // Prevent multiple simultaneous validations
+            if (this.websiteValidating) {
                 return false;
             }
             
-            this.clearFieldError(field);
-            return true;
+            this.websiteValidating = true;
+            this.showFieldValidationLoading(field);
+            
+            try {
+                // Use unified Zod validation with availability checking
+                const validationResult = await validateFieldWithAvailability('website', value);
+                
+                if (!validationResult.success) {
+                    this.showFieldError(field, validationResult.error);
+                    return false;
+                }
+                
+                this.clearFieldError(field);
+                return true;
+            } finally {
+                this.websiteValidating = false;
+                this.hideFieldValidationLoading(field);
+            }
         }
         
         validateFirstName() {
@@ -374,24 +416,37 @@ import { initializeTracker } from './tracking.js';
                 return true;
             }
             
-            // Use unified Zod validation with availability checking
-            const validationResult = await validateFieldWithAvailability('email', value);
-            
-            if (!validationResult.success) {
-                this.showFieldError(field, validationResult.error);
+            // Prevent multiple simultaneous validations
+            if (this.emailValidating) {
                 return false;
             }
             
-            this.clearFieldError(field);
+            this.emailValidating = true;
+            this.showFieldValidationLoading(field);
             
-            // Track email field completion
-            if (this.tracker) {
-                this.tracker.trackFieldComplete('email', {
-                    domain: this.extractDomain(value)
-                });
+            try {
+                // Use unified Zod validation with availability checking
+                const validationResult = await validateFieldWithAvailability('email', value);
+                
+                if (!validationResult.success) {
+                    this.showFieldError(field, validationResult.error);
+                    return false;
+                }
+                
+                this.clearFieldError(field);
+                
+                // Track email field completion
+                if (this.tracker) {
+                    this.tracker.trackFieldComplete('email', {
+                        domain: this.extractDomain(value)
+                    });
+                }
+                
+                return true;
+            } finally {
+                this.emailValidating = false;
+                this.hideFieldValidationLoading(field);
             }
-            
-            return true;
         }
         
         extractDomain(email) {

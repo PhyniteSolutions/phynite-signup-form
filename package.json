@@ -1,6 +1,6 @@
 {
   "name": "phynite-signup-form",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "WordPress plugin for Phynite Analytics signup forms with secure API integration",
   "main": "assets/js/frontend.js",
   "scripts": {

@@ -328,6 +328,9 @@ class Phynite_Signup_Form_Block {
 							placeholder="https://example.com"
 							required
 							autocomplete="url">
+					<div class="phynite-field-loading" style="display: none;">
+						<div class="phynite-spinner"></div>
+					</div>
 					<div class="phynite-field-error" role="alert"></div>
 				</div>
 				
@@ -380,6 +383,9 @@ class Phynite_Signup_Form_Block {
 							required
 							maxlength="255"
 							autocomplete="email">
+					<div class="phynite-field-loading" style="display: none;">
+						<div class="phynite-spinner"></div>
+					</div>
 					<div class="phynite-field-error" role="alert"></div>
 				</div>
 				

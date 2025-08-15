@@ -3,7 +3,7 @@
  * Plugin Name: Phynite Analytics Signup Form
  * Plugin URI: https://phynitesolutions.com
  * Description: A WordPress plugin that provides a customizable Gutenberg block for Phynite Analytics signup forms with secure API integration.
- * Version: 1.0.0
+ * Version: 1.2.0
  * Requires at least: 6.8
  * Requires PHP: 8.3
  * Author: Phynite Solutions
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants
-define( 'PHYNITE_SIGNUP_FORM_VERSION', '1.0.0' );
+define( 'PHYNITE_SIGNUP_FORM_VERSION', '1.2.0' );
 define( 'PHYNITE_SIGNUP_FORM_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PHYNITE_SIGNUP_FORM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'PHYNITE_SIGNUP_FORM_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );

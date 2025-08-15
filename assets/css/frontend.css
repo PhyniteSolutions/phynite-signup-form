@@ -183,6 +183,34 @@
     visibility: visible;
 }
 
+/* Field Validation Loading Indicators */
+.phynite-field-loading {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: none;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.phynite-form-field {
+    position: relative;
+}
+
+.phynite-field-loading .phynite-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: phynite-spin 1s linear infinite;
+}
+
+.phynite-form-input.validating {
+    padding-right: 40px; /* Make room for spinner */
+}
+
 /* Plan Selection */
 .phynite-plan-selection {
     border: none;
@@ -547,6 +575,14 @@
     padding: 0;
 }
 
+.phynite-signup-form-container[data-style="minimal"] .phynite-field-loading {
+    right: 0;
+}
+
+.phynite-signup-form-container[data-style="minimal"] .phynite-form-input.validating {
+    padding-right: 30px;
+}
+
 .phynite-signup-form-container[data-style="minimal"] .phynite-form-title {
     font-weight: 400;
     font-size: 24px;
@@ -817,6 +853,20 @@
     --border-radius: 4px;
     padding: var(--spacing-md);
     max-width: 400px;
+}
+
+.phynite-signup-form-container[data-style="compact"] .phynite-field-loading {
+    right: 8px;
+}
+
+.phynite-signup-form-container[data-style="compact"] .phynite-field-loading .phynite-spinner {
+    width: 14px;
+    height: 14px;
+    border-width: 1px;
+}
+
+.phynite-signup-form-container[data-style="compact"] .phynite-form-input.validating {
+    padding-right: 32px;
 }
 
 .phynite-signup-form-container[data-style="compact"] .phynite-form-title {
